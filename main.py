@@ -2,6 +2,7 @@ import mimetypes
 import json
 import socket
 import logging
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse, unquote_plus
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -96,7 +97,7 @@ def save_to_db(data):
     try:
         data = unquote_plus(data)
         parse_data = dict([i.split("=") for i in data.split("&")])
-        print(parse_data)
+        parse_data["date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         db.messages.insert_one(parse_data)
     except Exception as e:
         logging.error(e)
