@@ -2,6 +2,7 @@ import mimetypes
 import json
 import socket
 import logging
+import multiprocessing
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse, unquote_plus
@@ -123,6 +124,14 @@ def run_socket_server():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(threadName)s - %(message)s")
-    Thread(target=run_http_server, name="HTTP_Server").start()
-    Thread(target=run_socket_server,  name="SOCKET_Server").start()
+                        format="%(asctime)s - %(processName)s - %(message)s")
+    http_process = multiprocessing.Process(
+        target=run_http_server, name="HTTP_Server")
+    socket_process = multiprocessing.Process(
+        target=run_socket_server, name="Socket_Server")
+
+    http_process.start()
+    socket_process.start()
+
+    http_process.join()
+    socket_process.join()
